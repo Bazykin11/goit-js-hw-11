@@ -48,6 +48,7 @@ function creatMarkup(hits){
 
     if (hits.totalHits < (pixApiService.page - 1) * 40) {
       Notify.failure("We're sorry, but you've reached the end of search results.");
+      observer.unobserve(guard)
       return;
   }
   } catch (error){
@@ -61,11 +62,15 @@ function clearArticlesContainer (){
 }
 
 
+
 function onLoadMore(entries){
-  const entry = entries[0];
-  if(entry.isIntersecting){
-      pixApiService.fetchArticles().then(creatMarkup);
+  if (pixApiService.page > 1){
+    const entry = entries[0]; 
+    if(entry.isIntersecting){
+        pixApiService.fetchArticles().then(creatMarkup);
+    }
   }
+  // totalPagesCalc();
 }
 
 function fetchArticles() {
@@ -77,9 +82,18 @@ function fetchArticles() {
       else {
         Notify.success(`Hooray! We found ${totalHits} images.`);
     }
-      creatMarkup(hits)
+      creatMarkup(hits);
+      // totalPagesCalc(hits);
   })
 }
+
+
+
+// function totalPagesCalc(hits) {
+//   totalPages = Math.ceil(hits.totalHits / hits.hits.length);
+//   console.log(totalPages);
+//   return hits;
+// }
 
 // -----------------------SCROLL-----------------
 const options = {
